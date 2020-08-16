@@ -1,0 +1,61 @@
+<div class="modal fade" id="addP2Repsitory" tabindex="-1" role="dialog" aria-labelledby="addP2Repsitory" aria-hidden="true" >
+    <img src="./images/Drops-128px.gif" :class="{ disabled: isDisabled }" v-if="isDisabled" id="loading-disabled" hidden>
+    <div class="modal-dialog modal-dialog-centered" role="document" :class="{ disabled: isDisabled }" v-if="isDisabled"> 
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Create p2 repository</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            Select bundles for repository:
+                        </div>
+                        <div class="row">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="files" ref="files" multiple v-on:change="onChangedUploadFiles()">
+                                <label class="custom-file-label" for="file-repository">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" id="upload-button-repository"  v-on:click="createRepository()" class="btn btn-primary">Create repository</button>
+                </div>
+        </div>
+    </div>
+
+    <img src="./images/Drops-128px.gif" :class="{ disabled: isDisabled }" v-else="isDisabled" style="position: absolute;top: 43%;left: 48%;">
+    <div class="modal-dialog modal-dialog-centered" role="document" :class="{ disabled: isDisabled }" v-else="isDisabled" > 
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create p2 repository</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                Select bundles for repository:
+                            </div>
+                            <div class="row">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="files" ref="files" multiple v-on:change="onChangedUploadFiles()">
+                                    <label class="custom-file-label" for="file-repository">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" id="upload-button-repository"  v-on:click="createRepository()" class="btn btn-primary">Create repository</button>
+                    </div>
+            </div>
+        </div>
+</div>
+
+<script src="./js/createRepository.js"></script>

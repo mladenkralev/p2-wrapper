@@ -1,0 +1,123 @@
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+
+buildscript {
+	ext.felixPluguin = '0.30'
+
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
+		classpath("gradle.plugin.org.felix.osgi:buildSrc:$felixPluguin")
+	}
+}
+
+plugins {
+	id 'org.felix.osgi' version '0.30'
+	id 'com.bmuschko.docker-spring-boot-application' version '3.6.2'
+//	id 'com.gradle.build-scan' version '2.1'
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootJar {
+	baseName = 'gs-spring-boot'
+	version =  '0.1.0'
+}
+
+/*buildScan {
+	termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+	termsOfServiceAgree = 'yes'
+}*/
+
+repositories {
+	mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.1.RELEASE'
+	compile group: 'org.springframework', name: 'spring-webmvc', version: '5.1.0.RELEASE'
+	compile group: 'org.springframework', name: 'spring-web', version: '5.1.0.RELEASE'
+	compile group: 'org.springframework', name: 'spring-core', version: '5.1.0.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.1.1.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.1.1.RELEASE'
+
+	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+
+	testCompile group: 'org.springframework.boot', name: 'spring-boot-test', version: '2.0.5.RELEASE'
+	testCompile group: 'org.springframework', name: 'spring-test', version: '5.1.0.RELEASE'
+	testCompile("junit:junit")
+}
+
+task copySpringJar(type: Copy) dependsOn build, createP2Wrapper {
+	doLast {
+		println(project.buildDir)
+		copy {
+			from project.buildDir.toString() + "/p2Container"
+			into project.buildDir.toString() + "/docker/p2Container"
+		}
+
+		copy {
+			from project.buildDir.toString() + "/libs"
+			into project.buildDir.toString() + "/docker/"
+		}
+	}
+}
+copySpringJar.mustRunAfter createP2Wrapper
+copySpringJar.mustRunAfter build
+
+String p2App = "/p2Container"
+String springBootApp = "gs-spring-boot-0.1.0.jar";
+
+task createDockerfile(type: Dockerfile) {
+	dependsOn 'build'
+	dependsOn 'f'
+
+	destFile = project.file('build/docker/Dockerfile')
+	from 'openjdk:8-jre-alpine'
+	copyFile springBootApp, '/app/gs-spring-boot-0.1.0.jar'
+	copyFile p2App, '/app/p2Container'
+	entryPoint 'java'
+	defaultCommand '-jar', '/app/gs-spring-boot-0.1.0.jar'
+	runCommand 'apk --update --no-cache add curl'
+	exposePort 8080
+//	instruction 'HEALTHCHECK CMD curl -f http://localhost:8080/health || exit 1'
+}
+createDockerfile.mustRunAfter copySpringJar
+
+task buildImage(type: DockerBuildImage)  {
+	dependsOn createDockerfile
+	inputDir = createDockerfile.destFile.parentFile
+	tag = "springp2:1.0.0"
+}
+buildImage.mustRunAfter createDockerfile
+
+//task pushImageToRegistry(type: DockerPushImage) {
+//	dependsOn 'createDockerfile'
+//	dependsOn 'copySpringJar'
+//	dependsOn 'buildImage'
+//	imageName = buildImage.getTag()
+//}
+//pushImageToRegistry.mustRunAfter buildImage
+
+docker {
+	registryCredentials {
+		username = getConfigurationProperty('DOCKER_USERNAME', 'docker.username')
+		password = getConfigurationProperty('DOCKER_PASSWORD', 'docker.password')
+		email = getConfigurationProperty('DOCKER_EMAIL', 'docker.email')
+	}
+}
+
+String getConfigurationProperty(String envVar, String sysProp) {
+	System.getenv(envVar) ?: project.findProperty(sysProp)
+}
+

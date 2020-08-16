@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7"
+    crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <link rel="stylesheet" href="./libs/css/bootstrap.min.css">
+  <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>
+  <script src="//unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+  <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <link rel="stylesheet" href="./css/navbar.css">
+  <link rel="stylesheet" href="./css/loadingbar.css">
+
+  <script src="./libs/js/bootstrap.min.js"></script>
+  <script src="./js/navbar.js"></script>
+  <script src="./js/applicationAjax.js"></script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+
+    <!-- Sidebar  -->
+    <nav id="sidebar">
+      <div id="sidebarWrapper"></div>
+    </nav>
+
+    <!-- Page Content  -->
+    <div id="content">
+      <div id="navbar">
+      </div>
+      
+      <!-- MODALS -->
+      <div id="addP2RepositoryModal">
+      </div>
+
+      <div id="addP2ProfileModal">
+      </div>
+
+      <div class="container-fluid h-75 d-inline-block">
+          <div id="test-container">
+              <div class="row">
+                <button type="button" class="btn btn-primary" id="refresh-repository-button">Refresh</button>                
+              </div>
+              <br/>
+          </div>
+      </div>
+
+      <div id="footer">
+      </div>
+
+      <script>
+        $("#header").load("html/header.html");
+        $("#addP2RepositoryModal").load("html/addP2RepositoryModal.html");
+        $("#addP2ProfileModal").load("html/addP2ProfileModal.html");
+        $("#navbar").load("html/navbar.html");
+        $("#sidebarWrapper").load("html/sidebarWrapper.html");
+        $("#footer").load("html/footer.html"); 
+      </script>
+    </div>
+    
+</body>
+
+</html>
